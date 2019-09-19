@@ -1,5 +1,4 @@
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.ArrayList;
@@ -102,17 +101,10 @@ public class MainWindow extends BasicWindow {
             public void run() {
                 try {
                     ArrayList<String> functionList = new ArrayList<String>();
-                    for (int i = 0; i < 9; i++) {
-                        functionList.add(functionBoxes.get(i).getText());
-                    }
-                    for (int i = 0; i < 9; i++) {
-                        functionList.remove("");
-                    }
+                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
+                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
                     String[] functions = new String[functionList.size()];
-                    for (int i = 0; i < functionList.size(); i++) {
-                        functions[i] = functionList.get(i);
-                    }
-
+                    for (int i = 0; i < functionList.size(); i++) { functions[i] = functionList.get(i); }
 
                     FunctionParser fp = new FunctionParser(functions);
 
@@ -133,9 +125,40 @@ public class MainWindow extends BasicWindow {
                 }
             }
         } ));
-        lBotPanel.addComponent(new Label("2)"));
+
+        lBotPanel.addComponent(new Button("Save...", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<String> functionList = new ArrayList<String>();
+                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
+                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
+                    String[] functions = new String[functionList.size()];
+                    for (int i = 0; i < functionList.size(); i++) { functions[i] = functionList.get(i); }
 
 
+                    double x_scale = Double.parseDouble(xScaleBox.getText());
+                    double y_scale = Double.parseDouble(yScaleBox.getText());
+                    int x_begin = Integer.parseInt(xLeftBox.getText());
+                    int x_end = Integer.parseInt(xRightBox.getText());
+                    int y_begin = Integer.parseInt(yBottomBox.getText());
+                    int y_end = Integer.parseInt(yTopBox.getText());
+
+                    gui.addWindowAndWait(new SaveWindow(gui, x_scale, y_scale, x_begin, x_end, y_begin, y_end, functions));
+                } catch(Exception e) {
+                    gui.addWindowAndWait(new ErrorWindow(e));
+                }
+            }
+        }));
+
+        lBotPanel.addComponent(new Button("Open...", new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }));
+
+        lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 7)));
         // This ultimately links in the panels as the window content
         setComponent(horizontalPanel);
     }

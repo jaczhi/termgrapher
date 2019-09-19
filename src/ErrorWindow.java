@@ -12,17 +12,20 @@ public class ErrorWindow extends BasicWindow {
         panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(new Label("Program Stopped! You may need to close the application."));
 
-        panel.addComponent(new Button("Stop", new Runnable() {
+        Panel buttonPanel = new Panel();
+        buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        panel.addComponent(buttonPanel);
+        buttonPanel.addComponent(new Button("Stop", new Runnable() {
             @Override
             public void run() { System.exit(0); }
         }));
 
-        panel.addComponent(new Button("Continue [FORCE]", new Runnable() {
+        buttonPanel.addComponent(new Button("Continue [FORCE]", new Runnable() {
             @Override
             public void run() { close(); }
         }));
 
-        panel.addComponent(new Button("View Details", new Runnable() {
+        buttonPanel.addComponent(new Button("View Details", new Runnable() {
             @Override
             public void run() {
                 if(!messageOpen) {

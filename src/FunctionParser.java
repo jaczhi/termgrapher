@@ -45,4 +45,8 @@ public class FunctionParser {
         return (Double) Eval.x(mathX, output[position]);
     }
 
+    public String[] getOutput() {
+        return output;
+    }
+
 }

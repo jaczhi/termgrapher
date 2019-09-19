@@ -23,5 +23,4 @@ public class Grapher {
 
         screen.stopScreen();
     }
-
 }
