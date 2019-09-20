@@ -20,12 +20,12 @@ public class ErrorWindow extends BasicWindow {
             public void run() { System.exit(0); }
         }));
 
-        buttonPanel.addComponent(new Button("Continue [FORCE]", new Runnable() {
+        buttonPanel.addComponent(new Button("Continue", new Runnable() {
             @Override
             public void run() { close(); }
         }));
 
-        buttonPanel.addComponent(new Button("View Details", new Runnable() {
+        buttonPanel.addComponent(new Button("View Details >> ", new Runnable() {
             @Override
             public void run() {
                 if(!messageOpen) {

@@ -151,14 +151,36 @@ public class MainWindow extends BasicWindow {
             }
         }));
 
+        lBotPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
         lBotPanel.addComponent(new Button("Open...", new Runnable() {
             @Override
             public void run() {
+                try {
+                    OpenWindow openWindow = new OpenWindow(gui);
+                    gui.addWindowAndWait(openWindow);
+                    if(openWindow.opened) {
+                        xScaleBox.setText(String.valueOf(openWindow.inputContext.x_scale));
+                        yScaleBox.setText(String.valueOf(openWindow.inputContext.y_scale));
+                        xLeftBox.setText(String.valueOf(openWindow.inputContext.x_begin));
+                        xRightBox.setText(String.valueOf(openWindow.inputContext.x_end));
+                        yBottomBox.setText(String.valueOf(openWindow.inputContext.y_begin));
+                        yTopBox.setText(String.valueOf(openWindow.inputContext.y_end));
 
+                        for(int i=0; i<functionBoxes.size(); i++) {
+                            try {
+                                functionBoxes.get(i).setText(openWindow.inputContext.functions[i]);
+                            } catch(Exception e) {
+                                functionBoxes.get(i).setText("");
+                            }
+                        }
+                    }
+                } catch(Exception e) {
+                    gui.addWindowAndWait(new ErrorWindow(e));
+                }
             }
         }));
+        lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 3)));
 
-        lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 7)));
         // This ultimately links in the panels as the window content
         setComponent(horizontalPanel);
     }
