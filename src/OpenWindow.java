@@ -1,6 +1,7 @@
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class OpenWindow extends BasicWindow {
@@ -32,7 +33,9 @@ public class OpenWindow extends BasicWindow {
                     opened = true;
                     close();
                 } catch(Exception e) {
-                    gui.addWindowAndWait(new ErrorWindow(e));
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
                 }
             }
         }));

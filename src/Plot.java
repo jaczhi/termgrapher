@@ -11,12 +11,12 @@ public class Plot {
     private final int X_END;
     private final int Y_BEGIN;
     private final int Y_END;
+    private final boolean SMOOTHING;
     private String[] functions; // list of functions to be graphed
     private ArrayList<Map<Integer, Integer>> allPoints; // contains x,y pairs of all functions
-    private String textPoints; // list of points in text form
     char[][] plot;
 
-    public Plot(double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, String[]functions, FunctionParser fp) {
+    public Plot(double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, String[]functions, FunctionParser fp) {
         this.X_SCALE = x_scale;
         this.Y_SCALE = y_scale;
         this.X_BEGIN = (int) (x_begin * this.X_SCALE); // scales x and y to actual amount of characters, not units
@@ -25,20 +25,18 @@ public class Plot {
         this.Y_END = (int) (y_end * this.Y_SCALE);
 
         this.functions = functions;
-        textPoints = "";
         this.allPoints = new ArrayList();
 
         for(int i = 0; i < this.functions.length; i++) {
-            textPoints += "y" + (i+1) + " = " + this.functions[i] + ": \n"; // labels each function in textpoints
 
             Map<Integer, Integer> points = new HashMap<Integer, Integer>();
             for(int x=X_BEGIN; x<=X_END; x++) {
                 double mathX = (x / X_SCALE); // actual x value
                 double mathY = fp.evalParsed(i, mathX);
                 int y = (int) (mathY * Y_SCALE);
-
+                // removing the test below will cause in incorrect plot
                 try {
-                    textPoints += "x=" + round(mathX, 2) + "\ty=" + round(mathY, 2) + "\n";
+                    round(mathY, 2);
                 } catch (Exception e) {
                     continue;
                 }
@@ -48,6 +46,7 @@ public class Plot {
         }
 
         // converts points into character plot
+        this.SMOOTHING = smoothing;
         this.plot = new char[Y_END-Y_BEGIN+1][X_END-X_BEGIN+1];
         for (int i=(Y_END); i>=Y_BEGIN; i--) {
             for (int j=(X_END); j>=X_BEGIN; j--) {
@@ -55,24 +54,54 @@ public class Plot {
                 for(int k=0; k<this.allPoints.size(); k++){
                     try{
                         pointExists = this.allPoints.get(k).get(j).equals(i);
-                        if(pointExists) {break;}
+                        Integer nextPoint;
+                        try {
+                            nextPoint = this.allPoints.get(k).get(j+1);
+                        } catch(Exception e) {
+                            nextPoint = i;
+                        }
+                        try{
+                            if(SMOOTHING && pointExists && ((nextPoint-i) > 1)) {
+                                this.plot[Y_END - i][j - X_BEGIN] = '@';
+                                for (int l = 1; l < (nextPoint - this.allPoints.get(k).get(j)); l++) {
+                                    if (l > ((nextPoint - this.allPoints.get(k).get(j)) / 2)) {
+                                        this.plot[Y_END - i - l][j - X_BEGIN + 1] = '*';
+                                    } else {
+                                        this.plot[Y_END - i - l][j - X_BEGIN] = '*';
+                                    }
+                                }
+                                break;
+                            }
+                            else if(SMOOTHING && pointExists && ((nextPoint-i) < 1)) {
+                                this.plot[Y_END - i][j-X_BEGIN] = '@';
+                                for(int l=1; l<(this.allPoints.get(k).get(j) - nextPoint); l++) {
+                                    if(l > ((this.allPoints.get(k).get(j) - nextPoint) / 2)) {
+                                        this.plot[Y_END - i + l][j- X_BEGIN + 1] = '*';
+                                    }
+                                    else {
+                                        this.plot[Y_END - i +l][j - X_BEGIN] = '*';
+                                    }
+                                }
+                                break;
+                            }
+                            else if(pointExists) {this.plot[Y_END-i][j-X_BEGIN] = '@'; break;}
+                        } catch(Exception e) {
+                                if(pointExists) {this.plot[Y_END-i][j-X_BEGIN] = '@'; break;}
+                        }
                     } catch (Exception e) {
                         pointExists = false;
                     }
                 }
-                if(pointExists) {
-                    this.plot[Y_END-i][j-X_BEGIN] = '@';
-                }
-                else if(j==0 && i==0) { //center (0,0)
+                if(j==0 && i==0 && !pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') { //center (0,0)
                     this.plot[Y_END-i][j-X_BEGIN] = '+';
                 }
-                else if(j==0) {
+                else if(j==0 && !pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
                     this.plot[Y_END-i][j-X_BEGIN] = '|'; // y-axis
                 }
-                else if(i==0) {
+                else if(i==0 && !pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
                     this.plot[Y_END-i][j-X_BEGIN] = '-'; //x-axis
                 }
-                else {
+                else if(!pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
                     this.plot[Y_END-i][j-X_BEGIN] = ' '; // empty space
                 }
             }
@@ -83,9 +112,6 @@ public class Plot {
         return allPoints;
     }
 
-    public String getTextPoints() {
-        return textPoints;
-    }
 
     public char[][] getPlot() {
         return plot;
@@ -103,6 +129,27 @@ public class Plot {
             result += "\n";
         }
         return result;
+    }
+
+    public String[] getTextPoints(double begin, double end, double interval, FunctionParser fp) {
+        String[] textpoints = new String[functions.length + 1];
+        textpoints[0] = "x";
+        for(double mathX=begin; mathX<=end; mathX+=interval) {
+            textpoints[0] += "\n" + mathX;
+        }
+        for (int i=1; i<=functions.length; i++) {
+            textpoints[i] = "y" + i;
+            for(double mathX=begin; mathX<=end; mathX+=interval) {
+                double mathY = fp.evalParsed(i-1, mathX);
+                try {
+                    mathY = round(mathY, 2);
+                    textpoints[i] += ("\n" + mathY);
+                } catch (Exception e) {
+                    textpoints[i] += ("\nNA");
+                }
+            }
+        }
+        return textpoints;
     }
 
     private static double round(double value, int places) {

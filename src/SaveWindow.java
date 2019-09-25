@@ -1,10 +1,11 @@
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class SaveWindow extends BasicWindow {
-    public SaveWindow(MultiWindowTextGUI gui, double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, String[] functions) {
+    public SaveWindow(MultiWindowTextGUI gui, double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, String[] functions) {
         super("Save graph");
         Panel verticalPanel = new Panel();
         verticalPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -25,10 +26,12 @@ public class SaveWindow extends BasicWindow {
             @Override
             public void run(){
                 try {
-                    GraphIO.writeToFile(filenameBox.getText(), x_scale, y_scale, x_begin, x_end, y_begin, y_end, functions);
+                    GraphIO.writeToFile(filenameBox.getText(), x_scale, y_scale, x_begin, x_end, y_begin, y_end, smoothing, functions);
                     close();
                 } catch(Exception e) {
-                    gui.addWindowAndWait(new ErrorWindow(e));
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);   
                 }
             }
         }));

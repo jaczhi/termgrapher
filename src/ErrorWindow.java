@@ -1,5 +1,7 @@
 import com.googlecode.lanterna.gui2.*;
 
+import java.util.Arrays;
+
 public class ErrorWindow extends BasicWindow {
     private Exception error;
     boolean messageOpen = false;

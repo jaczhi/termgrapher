@@ -15,6 +15,7 @@ public class GraphIO {
     public int x_end = 0;
     public int y_begin = 0;
     public int y_end = 0;
+    public boolean smoothing = false;
     public String[] functions = new String[0];
     private String filename;
 
@@ -29,6 +30,7 @@ public class GraphIO {
         x_end = Integer.parseInt(brF.readLine());
         y_begin = Integer.parseInt(brF.readLine());
         y_end = Integer.parseInt(brF.readLine());
+        smoothing = Boolean.parseBoolean(brF.readLine());
 
         ArrayList<String> functionList = new ArrayList<String>();
         String line;
@@ -44,14 +46,15 @@ public class GraphIO {
 
     // IMPORTANT: static method
     public static void writeToFile(
-            String filename, double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, String[] functions) throws IOException {
+            String filename, double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, String[] functions) throws IOException {
         File outputFile = new File(filename);
         PrintWriter outFS = new PrintWriter(
                 new BufferedWriter(
                         new FileWriter(outputFile, false)));
 
         outFS.println(x_scale); outFS.println(y_scale); outFS.println(x_begin); outFS.println(x_end);
-        outFS.println(y_begin); outFS.println(y_end); for (int i=0; i<functions.length; i++) { outFS.println(functions[i]); }
+        outFS.println(y_begin); outFS.println(y_end); outFS.println(smoothing);
+        for (int i=0; i<functions.length; i++) { outFS.println(functions[i]); }
 
         outFS.flush();
     }

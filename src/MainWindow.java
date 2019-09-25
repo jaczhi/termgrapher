@@ -2,6 +2,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -26,11 +27,14 @@ public class MainWindow extends BasicWindow {
 
         super("TermGrapher v0.0.2 (c)Jacob Zhi - Beware the Jabberwock, my son!");
         this.gui = gui;
+        Panel mainPanel = new Panel();
+        mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         Panel horizontalPanel = new Panel();
         horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel leftPanel = new Panel();
         leftPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         Panel middlePanel = new Panel();
+        middlePanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel rightPanel = new Panel();
         Panel lTopPanel = new Panel();
         lTopPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -41,6 +45,7 @@ public class MainWindow extends BasicWindow {
         Panel configLeft = new Panel();
         Panel configRight = new Panel();
 
+        mainPanel.addComponent(horizontalPanel);
         horizontalPanel.addComponent(leftPanel);
         horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLine("Function Table")));
         horizontalPanel.addComponent(rightPanel);
@@ -92,9 +97,13 @@ public class MainWindow extends BasicWindow {
         for (int i=0; i<9; i++) {
             functionBoxes.add(new TextBox().setValidationPattern(Pattern.compile(
                     "[^\\;\\\"\\\\\\!\\@\\#\\$\\%\\&\\_\\'\\:\\<\\>\\~\\`\\,\\?]{1,200}")).addTo(
-                    lTopFinish).setPreferredSize(new TerminalSize(17, 1)));
+                    lTopFinish).setPreferredSize(new TerminalSize(25, 1)));
             lTopFinish.addComponent(new EmptySpace(new TerminalSize(0, 1)));
         }
+
+        CheckBox smoothBox = new CheckBox("Enable Fancy Line Smoothing");
+        lTopFinish.addComponent(smoothBox);
+        lTopFinish.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         lTopFinish.addComponent(new Button("Graph", new Runnable() {
             @Override
@@ -114,14 +123,21 @@ public class MainWindow extends BasicWindow {
                     int x_end = Integer.parseInt(xRightBox.getText());
                     int y_begin = Integer.parseInt(yBottomBox.getText());
                     int y_end = Integer.parseInt(yTopBox.getText());
+                    boolean smoothing = smoothBox.isChecked();
 
-                    plot = new Plot(x_scale, y_scale, x_begin, x_end, y_begin, y_end, functions, fp);
+                    plot = new Plot(x_scale, y_scale, x_begin, x_end, y_begin, y_end, smoothing, functions, fp);
                     middlePanel.removeAllComponents();
                     rightPanel.removeAllComponents();
-                    middlePanel.addComponent(new Label(plot.getTextPoints()));
+                    String[] textPoints = plot.getTextPoints(-5, 4.8, 0.5, fp);
+                    for(int i=0; i<textPoints.length; i++) {
+                        middlePanel.addComponent(new Label(textPoints[i]));
+                        middlePanel.addComponent(new EmptySpace(new TerminalSize(2, 1)));
+                    }
                     rightPanel.addComponent(new Label(plot.getStringPlot()));
                 } catch (Exception e) {
-                    gui.addWindowAndWait(new ErrorWindow(e));
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
                 }
             }
         } ));
@@ -143,10 +159,15 @@ public class MainWindow extends BasicWindow {
                     int x_end = Integer.parseInt(xRightBox.getText());
                     int y_begin = Integer.parseInt(yBottomBox.getText());
                     int y_end = Integer.parseInt(yTopBox.getText());
+                    boolean smoothing = smoothBox.isChecked();
 
-                    gui.addWindowAndWait(new SaveWindow(gui, x_scale, y_scale, x_begin, x_end, y_begin, y_end, functions));
+                    SaveWindow sw = new SaveWindow(gui, x_scale, y_scale, x_begin, x_end, y_begin, y_end, smoothing, functions);
+                    sw.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(sw);
                 } catch(Exception e) {
-                    gui.addWindowAndWait(new ErrorWindow(e));
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
                 }
             }
         }));
@@ -156,32 +177,36 @@ public class MainWindow extends BasicWindow {
             @Override
             public void run() {
                 try {
-                    OpenWindow openWindow = new OpenWindow(gui);
-                    gui.addWindowAndWait(openWindow);
-                    if(openWindow.opened) {
-                        xScaleBox.setText(String.valueOf(openWindow.inputContext.x_scale));
-                        yScaleBox.setText(String.valueOf(openWindow.inputContext.y_scale));
-                        xLeftBox.setText(String.valueOf(openWindow.inputContext.x_begin));
-                        xRightBox.setText(String.valueOf(openWindow.inputContext.x_end));
-                        yBottomBox.setText(String.valueOf(openWindow.inputContext.y_begin));
-                        yTopBox.setText(String.valueOf(openWindow.inputContext.y_end));
+                    OpenWindow ow = new OpenWindow(gui);
+                    ow.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ow);
+                    if(ow.opened) {
+                        xScaleBox.setText(String.valueOf(ow.inputContext.x_scale));
+                        yScaleBox.setText(String.valueOf(ow.inputContext.y_scale));
+                        xLeftBox.setText(String.valueOf(ow.inputContext.x_begin));
+                        xRightBox.setText(String.valueOf(ow.inputContext.x_end));
+                        yBottomBox.setText(String.valueOf(ow.inputContext.y_begin));
+                        yTopBox.setText(String.valueOf(ow.inputContext.y_end));
+                        smoothBox.setChecked(ow.inputContext.smoothing);
 
                         for(int i=0; i<functionBoxes.size(); i++) {
                             try {
-                                functionBoxes.get(i).setText(openWindow.inputContext.functions[i]);
+                                functionBoxes.get(i).setText(ow.inputContext.functions[i]);
                             } catch(Exception e) {
                                 functionBoxes.get(i).setText("");
                             }
                         }
                     }
                 } catch(Exception e) {
-                    gui.addWindowAndWait(new ErrorWindow(e));
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
                 }
             }
         }));
         lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 3)));
 
         // This ultimately links in the panels as the window content
-        setComponent(horizontalPanel);
+        setComponent(mainPanel);
     }
 }
