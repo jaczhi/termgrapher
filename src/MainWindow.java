@@ -1,4 +1,5 @@
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.ArrayList;
@@ -29,12 +30,12 @@ public class MainWindow extends BasicWindow {
         this.gui = gui;
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        Panel taskbarPanel = new Panel();
+        taskbarPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel horizontalPanel = new Panel();
         horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel leftPanel = new Panel();
         leftPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        Panel middlePanel = new Panel();
-        middlePanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel rightPanel = new Panel();
         Panel lTopPanel = new Panel();
         lTopPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -45,19 +46,17 @@ public class MainWindow extends BasicWindow {
         Panel configLeft = new Panel();
         Panel configRight = new Panel();
 
+        mainPanel.addComponent(taskbarPanel);
         mainPanel.addComponent(horizontalPanel);
         horizontalPanel.addComponent(leftPanel);
-        horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLine("Function Table")));
         horizontalPanel.addComponent(rightPanel);
         leftPanel.addComponent(lTopPanel.withBorder(Borders.singleLine("Options")));
-        leftPanel.addComponent(lBotPanel.withBorder(Borders.singleLine("Saves")));
+        leftPanel.addComponent(lBotPanel.withBorder(Borders.singleLine()));
         lTopPanel.addComponent(lTopConfig);
         lTopPanel.addComponent(lTopFinish);
         lTopConfig.addComponent(configLeft);
         lTopConfig.addComponent(configRight);
 
-        middlePanel.addComponent(new Label("Waiting..."));
-        middlePanel.addComponent(new EmptySpace(new TerminalSize(15, 30)));
         rightPanel.addComponent(new Label("Welcome. Please enter a function to view graph below..."));
         rightPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
@@ -126,14 +125,10 @@ public class MainWindow extends BasicWindow {
                     boolean smoothing = smoothBox.isChecked();
 
                     plot = new Plot(x_scale, y_scale, x_begin, x_end, y_begin, y_end, smoothing, functions, fp);
-                    middlePanel.removeAllComponents();
                     rightPanel.removeAllComponents();
-                    String[] textPoints = plot.getTextPoints(-5, 4.8, 0.5, fp);
-                    for(int i=0; i<textPoints.length; i++) {
-                        middlePanel.addComponent(new Label(textPoints[i]));
-                        middlePanel.addComponent(new EmptySpace(new TerminalSize(2, 1)));
-                    }
-                    rightPanel.addComponent(new Label(plot.getStringPlot()));
+                    rightPanel.addComponent(new Label(
+                            plot.getStringPlot()).setBackgroundColor(
+                                    new TextColor.RGB(255, 255, 255)).setForegroundColor(TextColor.ANSI.BLACK));
                 } catch (Exception e) {
                     ErrorWindow ew = new ErrorWindow(e);
                     ew.setHints(Arrays.asList(Window.Hint.CENTERED));
@@ -142,7 +137,7 @@ public class MainWindow extends BasicWindow {
             }
         } ));
 
-        lBotPanel.addComponent(new Button("Save...", new Runnable() {
+        taskbarPanel.addComponent(new Button("Save...", new Runnable() {
             @Override
             public void run() {
                 try {
@@ -172,8 +167,7 @@ public class MainWindow extends BasicWindow {
             }
         }));
 
-        lBotPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        lBotPanel.addComponent(new Button("Open...", new Runnable() {
+        taskbarPanel.addComponent(new Button("Open...", new Runnable() {
             @Override
             public void run() {
                 try {
@@ -204,7 +198,37 @@ public class MainWindow extends BasicWindow {
                 }
             }
         }));
-        lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 3)));
+
+        taskbarPanel.addComponent(new Button("Table...", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<String> functionList = new ArrayList<String>();
+                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
+                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
+                    String[] functions = new String[functionList.size()];
+                    for (int i = 0; i < functionList.size(); i++) { functions[i] = functionList.get(i); }
+
+                    FunctionParser fp = new FunctionParser(functions);
+                    PointTable pt = new PointTable(plot, fp);
+                    gui.addWindowAndWait(pt);
+                } catch(Exception e) {
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
+                }
+            }
+        }));
+
+        taskbarPanel.addComponent(new Button("Quit", new Runnable() {
+            @Override
+            public void run() {
+                close();
+            }
+        }));
+
+        lBotPanel.addComponent(new Label("Status: OK"));
+        lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 5)));
 
         // This ultimately links in the panels as the window content
         setComponent(mainPanel);
