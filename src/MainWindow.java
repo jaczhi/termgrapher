@@ -26,7 +26,7 @@ public class MainWindow extends BasicWindow {
          * 4) Graph itself
          */
 
-        super("TermGrapher v0.0.2 (c)Jacob Zhi - Beware the Jabberwock, my son!");
+        super("TermGrapher v0.0.3 (c)Jacob Zhi - Beware the Jabberwock, my son!");
         this.gui = gui;
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -215,6 +215,28 @@ public class MainWindow extends BasicWindow {
                 } catch(Exception e) {
                     ErrorWindow ew = new ErrorWindow(e);
                     ew.setHints(Arrays.asList(Window.Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
+                }
+            }
+        }));
+
+        taskbarPanel.addComponent(new Button("Intersection...", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<String> functionList = new ArrayList<String>();
+                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
+                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
+                    String[] functions = new String[functionList.size()];
+                    for (int i = 0; i < functionList.size(); i++) { functions[i] = functionList.get(i); }
+
+                    FunctionParser fp = new FunctionParser(functions);
+
+                    IntersectionAnalysis ia = new IntersectionAnalysis(fp);
+                    gui.addWindowAndWait(ia);
+                } catch(Exception e) {
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Hint.CENTERED));
                     gui.addWindowAndWait(ew);
                 }
             }

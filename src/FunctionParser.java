@@ -25,7 +25,7 @@ public class FunctionParser {
             String csc = "(?<!Math\\.)csc(\\(.{1,20}\\))"; String sec = "(?<!Math\\.)sec(\\(.{1,20}\\))";
             String cot = "(?<!Math\\.)cot(\\(.{1,20}\\))"; String sqrt = "(?<!Math\\.)sqrt(\\(.{1,20}\\))";
             String ln = "ln(\\(.{1,20}\\))"; String baseLog = "log(\\d{1,5})(\\(.{1,20}\\))";
-            String abs = "\\|(.{1,20})\\|";
+            String abs = "\\|(.{1,20})\\|"; String singleNum = "(^[^x]{1,}$)";
 
             output[i] = output[i].replaceAll(implicitMult, "$1*");
             output[i] = output[i].replaceAll(powerCaret, "Math.pow($1, $5)");
@@ -36,7 +36,8 @@ public class FunctionParser {
             output[i] = output[i].replaceAll(sqrt, "Math.sqrt$1");
             output[i] = output[i].replaceAll(ln, "Math.log$1");
             output[i] = output[i].replaceAll(baseLog, "Math.log$2/Math.log($1)");
-            output[i] = output[i].replaceAll(baseLog, "Math.abs($1)");
+            output[i] = output[i].replaceAll(abs, "Math.abs($1)");
+            output[i] = output[i].replaceAll(singleNum, "$1+(0*x)");
         }
         return output;
     }

@@ -4,6 +4,7 @@ import com.googlecode.lanterna.gui2.*;
 import java.util.regex.Pattern;
 
 public class PointTable extends BasicWindow {
+    private boolean opened = false;
     public PointTable(Plot plot, FunctionParser fp) {
         super("Table");
         Panel mainPanel = new Panel();
@@ -30,14 +31,17 @@ public class PointTable extends BasicWindow {
             @Override
             public void run() {
                 plotPanel.removeAllComponents();
-                double begin = Double.parseDouble(xLeftBox.getText());
-                double end = Double.parseDouble(xRightBox.getText());
-                double interval = Double.parseDouble(intervalBox.getText());
-                String[] textPoints = plot.getTextPoints(begin, end, interval, fp);
-                for(int i=0; i<textPoints.length; i++) {
-                    plotPanel.addComponent(new Label(textPoints[i]));
-                    plotPanel.addComponent(new EmptySpace(new TerminalSize(2, 1)));
+                if(!opened) {
+                    double begin = Double.parseDouble(xLeftBox.getText());
+                    double end = Double.parseDouble(xRightBox.getText());
+                    double interval = Double.parseDouble(intervalBox.getText());
+                    String[] textPoints = plot.getTextPoints(begin, end, interval, fp);
+                    for (int i = 0; i < textPoints.length; i++) {
+                        plotPanel.addComponent(new Label(textPoints[i]));
+                        plotPanel.addComponent(new EmptySpace(new TerminalSize(2, 1)));
+                    }
                 }
+                opened = !opened;
             }
         }));
         mainPanel.addComponent(plotPanel);
