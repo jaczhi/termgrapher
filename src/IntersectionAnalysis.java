@@ -1,6 +1,8 @@
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.regex.Pattern;
 
 public class IntersectionAnalysis extends BasicWindow {
@@ -43,12 +45,20 @@ public class IntersectionAnalysis extends BasicWindow {
             @Override
             public void run() {
                 if(zeroBox.isChecked()) {
-                    outer:
-                    for(double i=Double.parseDouble(xLeftBox.getText()); i<=Double.parseDouble(xRightBox.getText()); i=i+0.01) {
-                        if(Math.abs(fp.evalParsed(Integer.parseInt(y1Box.getText()) - 1, i)) < 0.1) {
+                    outerZero:
+                    for(double i=Double.parseDouble(xLeftBox.getText());
+                        i<=Double.parseDouble(xRightBox.getText()); i=i+0.1) {
+                        if(Math.abs(fp.evalParsed(Integer.parseInt(y1Box.getText()) - 1, i)) < 1) {
                             for(double j=i; j<=Double.parseDouble(xRightBox.getText()); j=j+0.001) {
-                                if(Math.abs(fp.evalParsed(Integer.parseInt(y1Box.getText()) - 1, j)) < 0.01) {
-                                    resultLabel.setText("x = " + j); break outer;
+                                if(Math.abs(fp.evalParsed(
+                                        Integer.parseInt(y1Box.getText()) - 1, j)) < 0.001) {
+                                    resultLabel.setText("x = " + round(j, 2)); break outerZero;
+                                }
+                            }
+                            for(double j=i; j<=Double.parseDouble(xRightBox.getText()); j=j+0.001) {
+                                if(Math.abs(fp.evalParsed(
+                                        Integer.parseInt(y1Box.getText()) - 1, j)) < 0.01) {
+                                    resultLabel.setText("x = " + round(j, 2)); break outerZero;
                                 }
                             }
                             resultLabel.setText("Not Found. ");
@@ -57,7 +67,27 @@ public class IntersectionAnalysis extends BasicWindow {
 
                 }
                 else {
-                    resultLabel.setText("TODO");
+                    outerInter:
+                    for(double i=Double.parseDouble(xLeftBox.getText());
+                        i<=Double.parseDouble(xRightBox.getText()); i=i+0.1) {
+                        if(Math.abs(fp.evalParsed(Integer.parseInt(y1Box.getText()) - 1, i)-
+                                fp.evalParsed(Integer.parseInt(y2Box.getText()) - 1, i)) < 1) {
+                            for(double j=i; j<=Double.parseDouble(xRightBox.getText()); j=j+0.001) {
+                                if(Math.abs(fp.evalParsed(Integer.parseInt(y1Box.getText()) - 1, j)
+                                        - fp.evalParsed(Integer.parseInt(y2Box.getText()) - 1, j)) < 0.001) {
+                                    resultLabel.setText("x = " + round(j, 2)); break outerInter;
+                                }
+                            }
+                            for(double j=i;
+                                j<=Double.parseDouble(xRightBox.getText()); j=j+0.001) {
+                                if(Math.abs(fp.evalParsed(Integer.parseInt(y2Box.getText()) - 1, j)
+                                        - fp.evalParsed(Integer.parseInt(y2Box.getText()) - 1, j)) < 0.01) {
+                                    resultLabel.setText("x = " + round(j, 2)); break outerInter;
+                                }
+                            }
+                            resultLabel.setText("Not Found. ");
+                        }
+                    }
                 }
             }
         }));
@@ -67,5 +97,11 @@ public class IntersectionAnalysis extends BasicWindow {
             public void run() { close(); }}));
 
         setComponent(mainPanel);
+    }
+
+    private static double round(double value, int places) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }

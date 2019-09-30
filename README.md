@@ -1,15 +1,19 @@
 # termgrapher
 
 Basic terminal mathematical grapher written entirely in Java.
+
+## Features (0.0.3)
+
+* Run without GUI / windowserver
+* Light on memory
+* Find zeroes, see table of values
+* Quickly save your graph
+
 ## Dependencies:
 
 * ```groovy-3.0.0-beta-3```
 * ```lanterna-3.0.1```
-You will only need to download these libraries if you are compiling from source. The .jar includes both. 
-
-## Screenshots
-
-https://i.imgur.com/vfuL8dE.png?1
+You will only need to download these libraries if you are compiling from source. The .jar includes both.
 
 ## Usage
 
