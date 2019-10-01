@@ -73,10 +73,10 @@ public class MainWindow extends BasicWindow {
         TerminalSize smallForm = new TerminalSize(4, 1);
         configLeft.addComponent(new Label("X Scale"));
         final TextBox xScaleBox = new TextBox().setValidationPattern(
-                Pattern.compile("([^\\w]|[\\d])*")).addTo(configRight).setText("1").setPreferredSize(smallForm);
+                Pattern.compile("([^\\w]|[\\d])*")).addTo(configRight).setText("4").setPreferredSize(smallForm);
         configLeft.addComponent(new Label("Y Scale"));
         final TextBox yScaleBox = new TextBox().setValidationPattern(
-                Pattern.compile("([^\\w]|[\\d])*")).addTo(configRight).setText("1").setPreferredSize(smallForm);
+                Pattern.compile("([^\\w]|[\\d])*")).addTo(configRight).setText("2").setPreferredSize(smallForm);
 
         configLeft.addComponent(new Label("x > "));
         final TextBox xLeftBox = new TextBox().setValidationPattern(Pattern.compile("([^\\w]|[\\d])[0-9]*")).
@@ -234,6 +234,28 @@ public class MainWindow extends BasicWindow {
 
                     IntersectionAnalysis ia = new IntersectionAnalysis(fp);
                     gui.addWindowAndWait(ia);
+                } catch(Exception e) {
+                    ErrorWindow ew = new ErrorWindow(e);
+                    ew.setHints(Arrays.asList(Hint.CENTERED));
+                    gui.addWindowAndWait(ew);
+                }
+            }
+        }));
+
+        taskbarPanel.addComponent(new Button("Integral...", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<String> functionList = new ArrayList<String>();
+                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
+                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
+                    String[] functions = new String[functionList.size()];
+                    for (int i = 0; i < functionList.size(); i++) { functions[i] = functionList.get(i); }
+
+                    FunctionParser fp = new FunctionParser(functions);
+
+                    IntegralWindow iw = new IntegralWindow(fp);
+                    gui.addWindowAndWait(iw);
                 } catch(Exception e) {
                     ErrorWindow ew = new ErrorWindow(e);
                     ew.setHints(Arrays.asList(Hint.CENTERED));

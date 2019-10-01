@@ -92,17 +92,34 @@ public class Plot {
                         pointExists = false;
                     }
                 }
-                if(j==0 && i==0 && !pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') { //center (0,0)
-                    this.plot[Y_END-i][j-X_BEGIN] = '+';
-                }
-                else if(j==0 && !pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
-                    this.plot[Y_END-i][j-X_BEGIN] = '|'; // y-axis
-                }
-                else if(i==0 && !pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
-                    this.plot[Y_END-i][j-X_BEGIN] = '-'; //x-axis
-                }
-                else if(!pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
-                    this.plot[Y_END-i][j-X_BEGIN] = ' '; // empty space
+                if(!pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
+                    if (j == 0 && i == 0) { //center (0,0)
+                        this.plot[Y_END - i][j - X_BEGIN] = '+';
+                    } else if(j==0 && i == Y_BEGIN) {
+                        this.plot[Y_END - i][j - X_BEGIN] = 'v';
+                    } else if(j==0 && i == Y_END) {
+                        this.plot[Y_END - i][j - X_BEGIN] = '^';
+                    } else if(i == 0 && j == X_BEGIN) {
+                        this.plot[Y_END - i][j - X_BEGIN] = '<';
+                    } else if(i == 0 && j == X_END) {
+                        this.plot[Y_END - i][j - X_BEGIN] = '>';
+                    } else if(j == 1 && i == Y_END) {
+                        String label = String.valueOf(round(Y_END / Y_SCALE, 2));
+                        for (int h = 0; h < label.length(); h++) {
+                            this.plot[Y_END - i][j - X_BEGIN + h] = label.charAt(h);
+                        }
+                    } else if(i == 1 && j == X_END) {
+                        String label = String.valueOf(round(X_END/X_SCALE, 2));
+                        for (int h = 0; h < label.length(); h++) {
+                            this.plot[Y_END - i][(j - X_BEGIN) - h] = label.charAt(label.length() - h - 1);
+                        }
+                    } else if (j == 0) {
+                        this.plot[Y_END - i][j - X_BEGIN] = '|'; // y-axis
+                    } else if (i == 0) {
+                        this.plot[Y_END - i][j - X_BEGIN] = '-'; //x-axis
+                    } else if (!Character.isDigit(this.plot[Y_END-i][j-X_BEGIN]) && this.plot[Y_END-i][j-X_BEGIN] != '.'){
+                        this.plot[Y_END - i][j - X_BEGIN] = ' '; // empty space
+                    }
                 }
             }
         }

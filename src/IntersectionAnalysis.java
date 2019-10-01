@@ -78,6 +78,12 @@ public class IntersectionAnalysis extends BasicWindow {
                                     resultLabel.setText("x = " + round(j, 2)); break outerInter;
                                 }
                             }
+                            for(double j=i; j<=Double.parseDouble(xRightBox.getText()); j=j+0.001) {
+                                if(Math.abs(fp.evalParsed(Integer.parseInt(y1Box.getText()) - 1, j)
+                                        - fp.evalParsed(Integer.parseInt(y2Box.getText()) - 1, j)) < 0.005) {
+                                    resultLabel.setText("x = " + round(j, 2)); break outerInter;
+                                }
+                            }
                             for(double j=i;
                                 j<=Double.parseDouble(xRightBox.getText()); j=j+0.001) {
                                 if(Math.abs(fp.evalParsed(Integer.parseInt(y2Box.getText()) - 1, j)
