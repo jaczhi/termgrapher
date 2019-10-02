@@ -14,7 +14,14 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class Grapher {
+    //static
     public static void main(String[] args) throws IOException {
+        INSTANCE = init();
+    }
+
+    private static Grapher INSTANCE;
+
+    public static Grapher init() throws IOException{
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
         Screen screen = new TerminalScreen(terminal);
         screen.startScreen();
@@ -27,5 +34,22 @@ public class Grapher {
 
         screen.stopScreen();
         terminal.clearScreen();
+
+        return new Grapher(gui);
+    }
+
+    public static Grapher get(){
+        return INSTANCE;
+    }
+
+    //instance
+    MultiWindowTextGUI gui;
+
+    private Grapher(MultiWindowTextGUI gui){
+        this.gui = gui;
+    }
+
+    public MultiWindowTextGUI getGui() {
+        return gui;
     }
 }
