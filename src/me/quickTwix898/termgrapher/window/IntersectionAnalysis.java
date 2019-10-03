@@ -1,5 +1,8 @@
+package me.quickTwix898.termgrapher.window;
+
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import me.quickTwix898.termgrapher.FunctionParser;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

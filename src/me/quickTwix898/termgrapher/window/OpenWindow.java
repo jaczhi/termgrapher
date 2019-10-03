@@ -1,19 +1,26 @@
+package me.quickTwix898.termgrapher.window;
+
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import me.quickTwix898.termgrapher.GraphIO;
+import me.quickTwix898.termgrapher.Plot;
+import me.quickTwix898.termgrapher.window.ErrorWindow;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class SaveWindow extends BasicWindow {
-    public SaveWindow(MultiWindowTextGUI gui, double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, String[] functions) {
-        super("Save graph");
+public class OpenWindow extends BasicWindow {
+    private Plot.GraphContext context;
+    private boolean opened = false;
+
+    public OpenWindow(MultiWindowTextGUI gui) {
+        super("Open graph");
         Panel verticalPanel = new Panel();
         verticalPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        verticalPanel.addComponent(new Label("Specify filename or path to save all settings and functions to: "));
+        verticalPanel.addComponent(new Label("Please specify directory where .tgs file is located: "));
         final TextBox filenameBox = new TextBox().setValidationPattern(
                 Pattern.compile("[^\\*\\[\\]\\:\\;\\,]{1,200}")).addTo(
-                verticalPanel).setText("Untitled.tgs").setPreferredSize(new TerminalSize(35, 1));
-        verticalPanel.addComponent(new Label("The file must end in the .tgs extension"));
+                verticalPanel).setPreferredSize(new TerminalSize(35, 1));
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         verticalPanel.addComponent(buttonPanel);
@@ -22,20 +29,32 @@ public class SaveWindow extends BasicWindow {
             @Override
             public void run(){ close(); }
         }));
-        buttonPanel.addComponent(new Button("Save", new Runnable() {
+
+        buttonPanel.addComponent(new Button("Open", new Runnable() {
             @Override
             public void run(){
                 try {
-                    GraphIO.writeToFile(filenameBox.getText(), x_scale, y_scale, x_begin, x_end, y_begin, y_end, smoothing, functions);
+                    GraphIO gIO = new GraphIO(filenameBox.getText());
+                    gIO.readFile();
+                    context = gIO.readFile();
+                    opened = true;
                     close();
                 } catch(Exception e) {
                     ErrorWindow ew = new ErrorWindow(e);
                     ew.setHints(Arrays.asList(Window.Hint.CENTERED));
-                    gui.addWindowAndWait(ew);   
+                    gui.addWindowAndWait(ew);
                 }
             }
         }));
 
         setComponent(verticalPanel);
+    }
+
+    public boolean isOpened() {
+        return opened;
+    }
+
+    public Plot.GraphContext getContext() {
+        return context;
     }
 }

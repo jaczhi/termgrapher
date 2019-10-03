@@ -1,3 +1,5 @@
+package me.quickTwix898.termgrapher.window;
+
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.Arrays;

@@ -1,7 +1,12 @@
+package me.quickTwix898.termgrapher;
+
+import groovyjarjarantlr4.v4.misc.Graph;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Plot {
@@ -12,23 +17,22 @@ public class Plot {
     private final int Y_BEGIN;
     private final int Y_END;
     private final boolean SMOOTHING;
-    private String[] functions; // list of functions to be graphed
+    private List<String> functions; // list of functions to be graphed
     private ArrayList<Map<Integer, Integer>> allPoints; // contains x,y pairs of all functions
     char[][] plot;
 
-    public Plot(double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, String[]functions, FunctionParser fp) {
-        this.X_SCALE = x_scale;
-        this.Y_SCALE = y_scale;
-        this.X_BEGIN = (int) (x_begin * this.X_SCALE); // scales x and y to actual amount of characters, not units
-        this.X_END = (int) (x_end * this.X_SCALE);
-        this.Y_BEGIN = (int) (y_begin * this.Y_SCALE);
-        this.Y_END = (int) (y_end * this.Y_SCALE);
+    public Plot(GraphContext graphContext, FunctionParser fp) {
+        this.X_SCALE = graphContext.getX_scale();
+        this.Y_SCALE = graphContext.getY_scale();
+        this.X_BEGIN = (int) (graphContext.getX_begin() * this.X_SCALE); // scales x and y to actual amount of characters, not units
+        this.X_END = (int) (graphContext.getX_end() * this.X_SCALE);
+        this.Y_BEGIN = (int) (graphContext.getY_begin() * this.Y_SCALE);
+        this.Y_END = (int) (graphContext.getY_end() * this.Y_SCALE);
 
-        this.functions = functions;
+        this.functions = graphContext.functions;
         this.allPoints = new ArrayList();
 
-        for(int i = 0; i < this.functions.length; i++) {
-
+        for(int i = 0; i < this.functions.size(); i++) {
             Map<Integer, Integer> points = new HashMap<Integer, Integer>();
             for(int x=X_BEGIN; x<=X_END; x++) {
                 double mathX = (x / X_SCALE); // actual x value
@@ -46,7 +50,7 @@ public class Plot {
         }
 
         // converts points into character plot
-        this.SMOOTHING = smoothing;
+        this.SMOOTHING = graphContext.isSmoothing();
         this.plot = new char[Y_END-Y_BEGIN+1][X_END-X_BEGIN+1];
         for (int i=(Y_END); i>=Y_BEGIN; i--) {
             for (int j=(X_END); j>=X_BEGIN; j--) {
@@ -149,12 +153,12 @@ public class Plot {
     }
 
     public String[] getTextPoints(double begin, double end, double interval, FunctionParser fp) {
-        String[] textpoints = new String[functions.length + 1];
+        String[] textpoints = new String[functions.size() + 1];
         textpoints[0] = "x";
         for(double mathX=begin; mathX<=end; mathX+=interval) {
             textpoints[0] += "\n" + mathX;
         }
-        for (int i=1; i<=functions.length; i++) {
+        for (int i=1; i<=functions.size(); i++) {
             textpoints[i] = "y" + i;
             for(double mathX=begin; mathX<=end; mathX+=interval) {
                 double mathY = fp.evalParsed(i-1, mathX);
@@ -173,5 +177,73 @@ public class Plot {
         BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    public static class GraphContext {
+        private double x_scale;
+        private double y_scale;
+        private int x_begin;
+        private int x_end;
+        private int y_begin;
+        private int y_end;
+        private boolean smoothing;
+        private List<String> functions;
+
+        public double getX_scale() {
+            return x_scale;
+        }
+
+        public double getY_scale() {
+            return y_scale;
+        }
+
+        public int getX_begin() {
+            return x_begin;
+        }
+
+        public int getX_end() {
+            return x_end;
+        }
+
+        public int getY_begin() {
+            return y_begin;
+        }
+
+        public int getY_end() {
+            return y_end;
+        }
+
+        public boolean isSmoothing() {
+            return smoothing;
+        }
+
+        public List<String> getFunctions() {
+            return functions;
+        }
+
+        public GraphContext(double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, List<String> functions) {
+            this.x_scale = x_scale;
+            this.y_scale = y_scale;
+            this.x_begin = x_begin;
+            this.x_end = x_end;
+            this.y_begin = y_begin;
+            this.y_end = y_end;
+            this.smoothing = smoothing;
+            this.functions = functions;
+        }
+
+
+        public GraphContext(String x_scale, String y_scale, String x_begin, String x_end, String y_begin, String y_end, boolean smoothing, List<String> functions) {
+            this.x_scale = Double.parseDouble(x_scale);
+            this.y_scale = Double.parseDouble(y_scale);
+            this.x_begin = Integer.parseInt(x_begin);
+            this.x_end = Integer.parseInt(x_end);
+            this.y_begin = Integer.parseInt(y_begin);
+            this.y_end = Integer.parseInt(y_end);
+            this.smoothing = smoothing;
+            this.functions = functions;
+        }
+
+
     }
 }

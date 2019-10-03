@@ -1,14 +1,12 @@
-import com.googlecode.lanterna.TerminalSize;
+package me.quickTwix898.termgrapher;
+
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal;
-import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
+import me.quickTwix898.termgrapher.window.MainWindow;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -1,5 +1,9 @@
+package me.quickTwix898.termgrapher.window;
+
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import me.quickTwix898.termgrapher.FunctionParser;
+import me.quickTwix898.termgrapher.Plot;
 
 import java.util.regex.Pattern;
 

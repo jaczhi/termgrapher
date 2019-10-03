@@ -1,4 +1,7 @@
+package me.quickTwix898.termgrapher.window;
+
 import com.googlecode.lanterna.gui2.*;
+import me.quickTwix898.termgrapher.FunctionParser;
 
 public class IntegralWindow extends BasicWindow {
     public IntegralWindow(FunctionParser fp) {
