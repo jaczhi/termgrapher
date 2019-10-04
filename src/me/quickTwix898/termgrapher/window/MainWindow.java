@@ -3,9 +3,7 @@ package me.quickTwix898.termgrapher.window;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import me.quickTwix898.termgrapher.*;
-import me.quickTwix898.termgrapher.button.GraphButton;
-import me.quickTwix898.termgrapher.button.OpenButton;
-import me.quickTwix898.termgrapher.button.SaveButton;
+import me.quickTwix898.termgrapher.button.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +12,6 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 public class MainWindow extends BasicWindow {
-    private Plot plot;
     private MultiWindowTextGUI gui;
 
     private final TextBox xScaleBox;
@@ -131,70 +128,17 @@ public class MainWindow extends BasicWindow {
         OpenButton openButton = new OpenButton(this, gui);
         taskbarPanel.addComponent(new Button("Open...", openButton));
 
-        taskbarPanel.addComponent(new Button("Table...", new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> functionList = new ArrayList<String>();
-                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
-                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
+        TableButton tableButton = new TableButton(this, gui);
+        taskbarPanel.addComponent(new Button("Table...", tableButton));
 
-                    FunctionParser fp = new FunctionParser(functionList);
-                    PointTable pt = new PointTable(plot, fp);
-                    gui.addWindowAndWait(pt);
-                } catch(Exception e) {
-                    ErrorWindow ew = new ErrorWindow(e);
-                    ew.setHints(Arrays.asList(Window.Hint.CENTERED));
-                    gui.addWindowAndWait(ew);
-                }
-            }
-        }));
+        IntersectionButton intersectionButton = new IntersectionButton(this, gui);
+        taskbarPanel.addComponent(new Button("Intersection...", intersectionButton));
 
-        taskbarPanel.addComponent(new Button("Intersection...", new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> functionList = new ArrayList<String>();
-                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
-                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
-                    FunctionParser fp = new FunctionParser(functionList);
+        IntegralButton integralButton = new IntegralButton(this, gui);
+        taskbarPanel.addComponent(new Button("Integral...", integralButton));
 
-                    IntersectionAnalysis ia = new IntersectionAnalysis(fp);
-                    gui.addWindowAndWait(ia);
-                } catch(Exception e) {
-                    ErrorWindow ew = new ErrorWindow(e);
-                    ew.setHints(Arrays.asList(Hint.CENTERED));
-                    gui.addWindowAndWait(ew);
-                }
-            }
-        }));
-
-        taskbarPanel.addComponent(new Button("Integral...", new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> functionList = new ArrayList<String>();
-                    for (int i = 0; i < 9; i++) { functionList.add(functionBoxes.get(i).getText()); }
-                    for (int i = 0; i < 9; i++) { functionList.remove(""); }
-
-                    FunctionParser fp = new FunctionParser(functionList);
-
-                    IntegralWindow iw = new IntegralWindow(fp);
-                    gui.addWindowAndWait(iw);
-                } catch(Exception e) {
-                    ErrorWindow ew = new ErrorWindow(e);
-                    ew.setHints(Arrays.asList(Hint.CENTERED));
-                    gui.addWindowAndWait(ew);
-                }
-            }
-        }));
-
-        taskbarPanel.addComponent(new Button("Quit", new Runnable() {
-            @Override
-            public void run() {
-                close();
-            }
-        }));
+        CloseButton closeButton = new CloseButton(this);
+        taskbarPanel.addComponent(new Button("Quit", closeButton));
 
         lBotPanel.addComponent(new Label("Status: OK"));
         lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 5)));

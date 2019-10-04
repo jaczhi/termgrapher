@@ -4,12 +4,13 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import me.quickTwix898.termgrapher.FunctionParser;
 import me.quickTwix898.termgrapher.Plot;
+import me.quickTwix898.termgrapher.button.CloseButton;
 
 import java.util.regex.Pattern;
 
-public class PointTable extends BasicWindow {
+public class PointTableWindow extends BasicWindow {
     private boolean opened = false;
-    public PointTable(Plot plot, FunctionParser fp) {
+    public PointTableWindow(Plot plot, FunctionParser fp) {
         super("Table");
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -49,10 +50,9 @@ public class PointTable extends BasicWindow {
             }
         }));
         mainPanel.addComponent(plotPanel);
-        mainPanel.addComponent(new Button("Done", new Runnable() {
-            @Override
-            public void run() { close(); }
-        }));
+
+        CloseButton closeButton = new CloseButton(this);
+        mainPanel.addComponent(new Button("Done", closeButton));
 
         setComponent(mainPanel);
     }

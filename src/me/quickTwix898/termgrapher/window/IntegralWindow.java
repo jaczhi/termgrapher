@@ -2,6 +2,7 @@ package me.quickTwix898.termgrapher.window;
 
 import com.googlecode.lanterna.gui2.*;
 import me.quickTwix898.termgrapher.FunctionParser;
+import me.quickTwix898.termgrapher.button.CloseButton;
 
 public class IntegralWindow extends BasicWindow {
     public IntegralWindow(FunctionParser fp) {
@@ -9,12 +10,10 @@ public class IntegralWindow extends BasicWindow {
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         mainPanel.addComponent(new Label("Still WIP"));
-        mainPanel.addComponent(new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                close();
-            }
-        }));
+
+        CloseButton closeButton = new CloseButton(this);
+        mainPanel.addComponent(new Button("Close", closeButton));
+
         setComponent(mainPanel);
     }
 }

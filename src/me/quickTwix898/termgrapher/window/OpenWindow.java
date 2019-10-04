@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import me.quickTwix898.termgrapher.GraphIO;
 import me.quickTwix898.termgrapher.Plot;
+import me.quickTwix898.termgrapher.button.CloseButton;
 import me.quickTwix898.termgrapher.window.ErrorWindow;
 
 import java.util.Arrays;
@@ -25,10 +26,8 @@ public class OpenWindow extends BasicWindow {
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         verticalPanel.addComponent(buttonPanel);
 
-        buttonPanel.addComponent(new Button("Cancel", new Runnable() {
-            @Override
-            public void run(){ close(); }
-        }));
+        CloseButton closeButton = new CloseButton(this);
+        buttonPanel.addComponent(new Button("Cancel", closeButton));
 
         buttonPanel.addComponent(new Button("Open", new Runnable() {
             @Override
