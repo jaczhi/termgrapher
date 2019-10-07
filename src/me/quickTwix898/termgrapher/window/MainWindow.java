@@ -137,6 +137,8 @@ public class MainWindow extends BasicWindow {
         IntegralButton integralButton = new IntegralButton(this, gui);
         taskbarPanel.addComponent(new Button("Integral...", integralButton));
 
+        DerivativeButton derivativeButton = new DerivativeButton(this, gui);
+        taskbarPanel.addComponent(new Button("Derivative...", derivativeButton));
         CloseButton closeButton = new CloseButton(this);
         taskbarPanel.addComponent(new Button("Quit", closeButton));
 
