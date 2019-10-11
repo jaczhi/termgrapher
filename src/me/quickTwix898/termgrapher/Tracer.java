@@ -24,7 +24,6 @@ public class Tracer {
         this.window = window;
         this.fp = fp;
         this.original = original;
-        this.position = 0;
         this.context = window.getContext();
 
         this.Y_SCALE = context.getY_scale();
@@ -35,17 +34,21 @@ public class Tracer {
         this.X_BEGIN = (int) (context.getX_scale() * context.getX_begin());
         this.X_END = (int) (context.getX_scale() * context.getX_end());
 
+        this.position = (int)((X_BEGIN+X_END)/2.0);
+
         this.yFunc = yFunc - 1;
     }
 
     public void next() {
-        if((position += 1) < X_END) {
+        if((position + 1) < X_END) {
             char[][] temp = copy();
             position += 1;
             double mathY = fp.evalParsed(yFunc, position/X_SCALE);
             int y = (int) (mathY * Y_SCALE);
 
-            temp[Y_END - y][position - X_BEGIN] = 'x';
+            try {
+                temp[Y_END - y][position - X_BEGIN] = 'x';
+            } catch(Exception e) {}
 
             String coordinates = "(" + Rounder.round(position/X_SCALE, 2) + "," +
                     Rounder.round(mathY, 2) + ")";
@@ -61,14 +64,15 @@ public class Tracer {
     }
 
     public void previous() {
-        if((position -= 1) > X_BEGIN) {
+        if((position - 1) > X_BEGIN) {
             char[][] temp = copy();
             position -= 1;
             double mathY = fp.evalParsed(yFunc, position/X_SCALE);
             int y = (int) (mathY * Y_SCALE);
 
-            temp[Y_END - y][position - X_BEGIN] = 'x';
-
+            try {
+                temp[Y_END - y][position - X_BEGIN] = 'x';
+            } catch(Exception e) {}
             String coordinates = "(" + Rounder.round(position/X_SCALE, 2) + "," +
                     Rounder.round(mathY, 2) + ")";
             for(int i=0; i<coordinates.length(); i++) {

@@ -26,9 +26,6 @@ public class OpenWindow extends BasicWindow {
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         verticalPanel.addComponent(buttonPanel);
 
-        CloseButton closeButton = new CloseButton(this);
-        buttonPanel.addComponent(new Button("Cancel", closeButton));
-
         buttonPanel.addComponent(new Button("Open", new Runnable() {
             @Override
             public void run(){
@@ -45,6 +42,11 @@ public class OpenWindow extends BasicWindow {
                 }
             }
         }));
+
+
+        CloseButton closeButton = new CloseButton(this);
+        buttonPanel.addComponent(new Button("Cancel", closeButton));
+
         setComponent(verticalPanel);
     }
 

@@ -33,9 +33,6 @@ public class DerivativeWindow extends BasicWindow {
         final TextBox xBox = new TextBox().setValidationPattern(Pattern.compile("([^\\w]|[\\d])*")).
                 addTo(panel1).setText("0").setPreferredSize(new TerminalSize(4, 1));
 
-        CloseButton closeButton = new CloseButton(this);
-        buttonPanel.addComponent(new Button("Close", closeButton));
-
         buttonPanel.addComponent(new Button("Calculate", new Runnable() {
             @Override
             public void run() {
@@ -45,6 +42,9 @@ public class DerivativeWindow extends BasicWindow {
                 resultLabel.setText(derivativeEngine.getResult());
             }
         }));
+
+        CloseButton closeButton = new CloseButton(this);
+        buttonPanel.addComponent(new Button("Close", closeButton));
 
         setComponent(mainPanel);
     }

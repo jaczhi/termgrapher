@@ -18,22 +18,30 @@ public class TraceWindow extends BasicWindow {
         this.fp = fp;
 
         Panel panel = new Panel();
-        panel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+
+        Panel topPanel = new Panel();
+        topPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        panel.addComponent(topPanel);
+
+        Panel bottomPanel = new Panel();
+        bottomPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        panel.addComponent(bottomPanel);
 
         Plot temp = new Plot(window.getContext(), fp);
 
-        panel.addComponent(new Label("y"));
+        topPanel.addComponent(new Label("y"));
         final TextBox yBox = new TextBox().setValidationPattern(Pattern.compile("[\\d]{1,}")).
-                addTo(panel).setText("1").setPreferredSize(new TerminalSize(2,1));
+                addTo(topPanel).setText("1").setPreferredSize(new TerminalSize(2,1));
 
-        panel.addComponent(new Button("Initialize", new Runnable() {
+        topPanel.addComponent(new Button("Initialise", new Runnable() {
             @Override
             public void run() {
                 tracer = new Tracer(window, fp, temp.getPlot(), Integer.parseInt(yBox.getText()));
             }
         }));
 
-        panel.addComponent(new Button("Left", new Runnable() {
+        bottomPanel.addComponent(new Button("Left", new Runnable() {
             @Override
             public void run() {
                 tracer.previous();
@@ -41,14 +49,14 @@ public class TraceWindow extends BasicWindow {
         }));
 
 
-        panel.addComponent(new Button("Right", new Runnable() {
+        bottomPanel.addComponent(new Button("Right", new Runnable() {
             @Override
             public void run() {
                 tracer.next();
             }
         }));
 
-        panel.addComponent(new Button("Close", new Runnable() {
+        topPanel.addComponent(new Button("Close", new Runnable() {
             @Override
             public void run() {
                 try {

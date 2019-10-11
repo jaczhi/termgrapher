@@ -2,15 +2,15 @@
 
 Basic terminal mathematical grapher written entirely in Java.
 
-https://i.imgur.com/ttdeziD.png
+https://i.imgur.com/sFLSbCj.png
 
-https://i.imgur.com/DY5ya0g.png
-
-## Features (0.0.3)
+## Features (0.1.0 beta)
 
 * Run without GUI / windowserver
 * Light on memory
 * Find zeroes, see table of values
+* Trace your graph
+* Find the derivative and integral
 * Quickly save your graph and reopen once you need it
 
 ## Dependencies:

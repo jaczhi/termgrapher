@@ -58,7 +58,7 @@ public class IntersectionAnalysisWindow extends BasicWindow {
         }));
 
         CloseButton closeButton = new CloseButton(this);
-        buttonPanel.addComponent(new Button("Cancel", closeButton));
+        buttonPanel.addComponent(new Button("Close", closeButton));
 
         setComponent(mainPanel);
     }

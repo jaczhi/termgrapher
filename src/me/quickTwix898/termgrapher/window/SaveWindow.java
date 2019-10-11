@@ -25,9 +25,6 @@ public class SaveWindow extends BasicWindow {
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         verticalPanel.addComponent(buttonPanel);
 
-        CloseButton closeButton = new CloseButton(this);
-        buttonPanel.addComponent(new Button("Cancel", closeButton));
-
         buttonPanel.addComponent(new Button("Save", new Runnable() {
             @Override
             public void run(){
@@ -41,6 +38,9 @@ public class SaveWindow extends BasicWindow {
                 close();
             }
         }));
+
+        CloseButton closeButton = new CloseButton(this);
+        buttonPanel.addComponent(new Button("Cancel", closeButton));
 
         setComponent(verticalPanel);
     }

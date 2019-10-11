@@ -44,7 +44,7 @@ public class MainWindow extends BasicWindow {
     private Label statusLabel; // log
 
     public MainWindow(MultiWindowTextGUI gui) {
-        super("TermGrapher v0.0.3 (c)Jacob Zhi - Beware the Jabberwock, my son!");
+        super("TermGrapher v0.1.0 (c)Jacob Zhi - Beware the Jabberwock, my son!");
         this.gui = gui; // gui will be used by child windows
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));

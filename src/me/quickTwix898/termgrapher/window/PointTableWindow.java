@@ -18,6 +18,8 @@ public class PointTableWindow extends BasicWindow {
         optionsPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel plotPanel = new Panel();
         plotPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        Panel buttonPanel = new Panel();
+        buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         TerminalSize smallForm = new TerminalSize(4, 1);
 
         mainPanel.addComponent(optionsPanel);
@@ -31,8 +33,8 @@ public class PointTableWindow extends BasicWindow {
         final TextBox intervalBox = new TextBox().setValidationPattern(Pattern.compile("([^\\w]|[\\d])*")).
                 addTo(optionsPanel).setText("1").setPreferredSize(smallForm);
 
-
-        mainPanel.addComponent(new Button("View Table >> ", new Runnable() {
+        mainPanel.addComponent(buttonPanel);
+        buttonPanel.addComponent(new Button("View Table", new Runnable() {
             @Override
             public void run() {
                 plotPanel.removeAllComponents();
@@ -52,7 +54,7 @@ public class PointTableWindow extends BasicWindow {
         mainPanel.addComponent(plotPanel);
 
         CloseButton closeButton = new CloseButton(this);
-        mainPanel.addComponent(new Button("Done", closeButton));
+        buttonPanel.addComponent(new Button("Close", closeButton));
 
         setComponent(mainPanel);
     }
