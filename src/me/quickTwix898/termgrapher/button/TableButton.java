@@ -8,7 +8,6 @@ import me.quickTwix898.termgrapher.window.ErrorWindow;
 import me.quickTwix898.termgrapher.window.MainWindow;
 import me.quickTwix898.termgrapher.window.PointTableWindow;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TableButton implements Runnable {
@@ -30,7 +29,7 @@ public class TableButton implements Runnable {
             PointTableWindow pt = new PointTableWindow(plot, fp);
             gui.addWindowAndWait(pt);
         } catch(Exception e) {
-            ErrorWindow ew = new ErrorWindow(e);
+            ErrorWindow ew = new ErrorWindow(e, window);
             ew.setHints(Arrays.asList(Window.Hint.CENTERED));
             gui.addWindowAndWait(ew);
         }

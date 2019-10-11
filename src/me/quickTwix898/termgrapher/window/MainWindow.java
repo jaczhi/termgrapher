@@ -1,12 +1,12 @@
 package me.quickTwix898.termgrapher.window;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import me.quickTwix898.termgrapher.*;
 import me.quickTwix898.termgrapher.button.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -14,6 +14,23 @@ import java.util.regex.Pattern;
 public class MainWindow extends BasicWindow {
     private MultiWindowTextGUI gui;
 
+    /*Lanterna Terminal Code
+     * ________________________
+     * |_________4)___________|
+     * |      |               |
+     * |  1)  |               |
+     * |      |       3)      |
+     * |______|               |
+     * |  2)  |               |
+     * |______|_______________|
+     *
+     * 1) Options and list of functions
+     * 2) Status box with error log
+     * 3) Graph itself
+     * 4) Menu bar with different applets
+     */
+
+    // instance variables for grabbing current graph configuration
     private final TextBox xScaleBox;
     private final TextBox yScaleBox;
     private final TextBox xLeftBox;
@@ -22,26 +39,13 @@ public class MainWindow extends BasicWindow {
     private final TextBox yTopBox;
     private List<TextBox> functionBoxes;
     private CheckBox smoothBox;
-    private Panel rightPanel;
+
+    private Panel rightPanel; // variable set new text into graph
+    private Label statusLabel; // log
 
     public MainWindow(MultiWindowTextGUI gui) {
-        /*Lanterna Terminal Code
-         * _______________________________
-         * |      |       |               |
-         * |  1)  |       |               |
-         * |      |   3)  |       4)      |
-         * |______|       |               |
-         * |  2)  |       |               |
-         * |______|_______|_______________|
-         *
-         * 1) Options and list of functions
-         * 2) Save/Open list of functions
-         * 3) Table w/ x,y value
-         * 4) Graph itself
-         */
-
         super("TermGrapher v0.0.3 (c)Jacob Zhi - Beware the Jabberwock, my son!");
-        this.gui = gui;
+        this.gui = gui; // gui will be used by child windows
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         Panel taskbarPanel = new Panel();
@@ -57,6 +61,7 @@ public class MainWindow extends BasicWindow {
         lTopConfig.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel lTopFinish = new Panel();
         Panel lBotPanel = new Panel();
+        lBotPanel.setPreferredSize(new TerminalSize(25, 10));
         Panel configLeft = new Panel();
         Panel configRight = new Panel();
 
@@ -65,7 +70,7 @@ public class MainWindow extends BasicWindow {
         horizontalPanel.addComponent(leftPanel);
         horizontalPanel.addComponent(rightPanel);
         leftPanel.addComponent(lTopPanel.withBorder(Borders.singleLine("Options")));
-        leftPanel.addComponent(lBotPanel.withBorder(Borders.singleLine()));
+        leftPanel.addComponent(lBotPanel.withBorder(Borders.singleLine("Error Log")));
         lTopPanel.addComponent(lTopConfig);
         lTopPanel.addComponent(lTopFinish);
         lTopConfig.addComponent(configLeft);
@@ -74,6 +79,7 @@ public class MainWindow extends BasicWindow {
         rightPanel.addComponent(new Label("Welcome. Please enter a function to view graph below..."));
         rightPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
+        // will be cleared after graph is done
         rightPanel.addComponent(new Label("Message of the Day:"));
         String tips[] = new String[5];
         tips[0] = "You can throw an intentional error message by typing the word error into the function box.";
@@ -124,12 +130,14 @@ public class MainWindow extends BasicWindow {
         SaveButton saveButton = new SaveButton(this, gui);
         taskbarPanel.addComponent(new Button("Save...", saveButton));
 
-
         OpenButton openButton = new OpenButton(this, gui);
         taskbarPanel.addComponent(new Button("Open...", openButton));
 
         TableButton tableButton = new TableButton(this, gui);
         taskbarPanel.addComponent(new Button("Table...", tableButton));
+
+        TraceButton traceButton = new TraceButton(this, gui);
+        taskbarPanel.addComponent(new Button("Trace...", traceButton));
 
         IntersectionButton intersectionButton = new IntersectionButton(this, gui);
         taskbarPanel.addComponent(new Button("Intersection...", intersectionButton));
@@ -142,8 +150,8 @@ public class MainWindow extends BasicWindow {
         CloseButton closeButton = new CloseButton(this);
         taskbarPanel.addComponent(new Button("Quit", closeButton));
 
-        lBotPanel.addComponent(new Label("Status: OK"));
-        lBotPanel.addComponent(new EmptySpace(new TerminalSize(15, 5)));
+        statusLabel = new Label("Status: OK\n");
+        lBotPanel.addComponent(statusLabel);
 
         // This ultimately links in the panels as the window content
         setComponent(mainPanel);
@@ -175,7 +183,13 @@ public class MainWindow extends BasicWindow {
         }
     }
 
-    public Panel getGraphPanel() {
-        return rightPanel;
+    public void setGraphLabel(String s) {
+        rightPanel.removeAllComponents();
+        rightPanel.addComponent(
+                new Label(s).
+                        setBackgroundColor(new TextColor.RGB(255, 255, 255)).
+                        setForegroundColor(TextColor.ANSI.BLACK));
     }
+
+    public void addStatus(String message) { statusLabel.setText(statusLabel.getText() + "\n" + message); }
 }

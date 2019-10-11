@@ -24,9 +24,11 @@ public class OpenButton implements Runnable {
             OpenWindow ow = new OpenWindow(gui);
             ow.setHints(Arrays.asList(Window.Hint.CENTERED));
             gui.addWindowAndWait(ow);
-            window.setContext(ow.getContext());
+            try {
+                window.setContext(ow.getContext());
+            } catch(Exception e) {}
         } catch(Exception e) {
-            ErrorWindow ew = new ErrorWindow(e);
+            ErrorWindow ew = new ErrorWindow(e, window);
             ew.setHints(Arrays.asList(Window.Hint.CENTERED));
             gui.addWindowAndWait(ew);
         }

@@ -1,8 +1,5 @@
 package me.quickTwix898.termgrapher;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 public class DerivativeEngine {
     private final double STEP = 0.001;
     private FunctionParser fp;
@@ -17,17 +14,10 @@ public class DerivativeEngine {
 
         double calc = fp.evalParsed(this.yNum, this.x+STEP) - fp.evalParsed(this.yNum, this.x-STEP);
         calc = calc/(STEP*2);
-        result = String.valueOf(round(calc, 2));
+        result = String.valueOf(Rounder.round(calc, 2));
     }
 
     public String getResult() {
         return result;
-    }
-
-    //TODO make global round function
-    private double round(double value, int places) {
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
     }
 }

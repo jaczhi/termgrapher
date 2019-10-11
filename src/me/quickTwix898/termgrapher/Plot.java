@@ -1,9 +1,5 @@
 package me.quickTwix898.termgrapher;
 
-import groovyjarjarantlr4.v4.misc.Graph;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +36,7 @@ public class Plot {
                 int y = (int) (mathY * Y_SCALE);
                 // removing the test below will cause in incorrect plot
                 try {
-                    round(mathY, 2);
+                    Rounder.round(mathY, 2);
                 } catch (Exception e) {
                     continue;
                 }
@@ -108,12 +104,12 @@ public class Plot {
                     } else if(i == 0 && j == X_END) {
                         this.plot[Y_END - i][j - X_BEGIN] = '>';
                     } else if(j == 1 && i == Y_END) {
-                        String label = String.valueOf(round(Y_END / Y_SCALE, 2));
+                        String label = String.valueOf(Rounder.round(Y_END / Y_SCALE, 2));
                         for (int h = 0; h < label.length(); h++) {
                             this.plot[Y_END - i][j - X_BEGIN + h] = label.charAt(h);
                         }
                     } else if(i == 1 && j == X_END) {
-                        String label = String.valueOf(round(X_END/X_SCALE, 2));
+                        String label = String.valueOf(Rounder.round(X_END/X_SCALE, 2));
                         for (int h = 0; h < label.length(); h++) {
                             this.plot[Y_END - i][(j - X_BEGIN) - h] = label.charAt(label.length() - h - 1);
                         }
@@ -163,7 +159,7 @@ public class Plot {
             for(double mathX=begin; mathX<=end; mathX+=interval) {
                 double mathY = fp.evalParsed(i-1, mathX);
                 try {
-                    mathY = round(mathY, 2);
+                    mathY = Rounder.round(mathY, 2);
                     textpoints[i] += ("\n" + mathY);
                 } catch (Exception e) {
                     textpoints[i] += ("\nNA");
@@ -173,11 +169,6 @@ public class Plot {
         return textpoints;
     }
 
-    private static double round(double value, int places) {
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
 
     public static class GraphContext {
         private double x_scale;

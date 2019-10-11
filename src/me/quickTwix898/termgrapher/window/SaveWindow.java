@@ -7,6 +7,7 @@ import me.quickTwix898.termgrapher.Plot;
 import me.quickTwix898.termgrapher.button.CloseButton;
 import me.quickTwix898.termgrapher.window.ErrorWindow;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -32,12 +33,12 @@ public class SaveWindow extends BasicWindow {
             public void run(){
                 try {
                     GraphIO.writeToFile(filenameBox.getText(), graphContext);
-                    close();
-                } catch(Exception e) {
+                } catch (IOException e) {
                     ErrorWindow ew = new ErrorWindow(e);
                     ew.setHints(Arrays.asList(Window.Hint.CENTERED));
-                    gui.addWindowAndWait(ew);   
+                    gui.addWindowAndWait(ew);
                 }
+                close();
             }
         }));
 

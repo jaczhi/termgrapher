@@ -27,7 +27,7 @@ public class IntegralButton implements Runnable {
             IntegralWindow iw = new IntegralWindow(fp);
             gui.addWindowAndWait(iw);
         } catch (Exception e) {
-            ErrorWindow ew = new ErrorWindow(e);
+            ErrorWindow ew = new ErrorWindow(e, window);
             ew.setHints(Arrays.asList(Window.Hint.CENTERED));
             gui.addWindowAndWait(ew);
         }

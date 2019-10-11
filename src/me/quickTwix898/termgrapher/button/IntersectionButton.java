@@ -26,7 +26,7 @@ public class IntersectionButton implements Runnable {
             IntersectionAnalysisWindow ia = new IntersectionAnalysisWindow(fp);
             gui.addWindowAndWait(ia);
         } catch(Exception e) {
-            ErrorWindow ew = new ErrorWindow(e);
+            ErrorWindow ew = new ErrorWindow(e, window);
             ew.setHints(Arrays.asList(Window.Hint.CENTERED));
             gui.addWindowAndWait(ew);
         }

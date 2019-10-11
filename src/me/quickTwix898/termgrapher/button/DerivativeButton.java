@@ -25,7 +25,7 @@ public class DerivativeButton implements Runnable {
             DerivativeWindow dw = new DerivativeWindow(fp);
             gui.addWindowAndWait(dw);
         } catch (Exception e) {
-            ErrorWindow ew = new ErrorWindow(e);
+            ErrorWindow ew = new ErrorWindow(e, window);
             ew.setHints(Arrays.asList(Window.Hint.CENTERED));
             gui.addWindowAndWait(ew);
         }
