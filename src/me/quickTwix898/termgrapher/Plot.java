@@ -1,5 +1,8 @@
 package me.quickTwix898.termgrapher;
 
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +17,7 @@ public class Plot {
     private final int Y_END;
     private final boolean SMOOTHING;
     private List<String> functions; // list of functions to be graphed
-    private ArrayList<Map<Integer, Integer>> allPoints; // contains x,y pairs of all functions
+    private List<Map<Integer, Integer>> allPoints; // contains x,y pairs of all functions
     char[][] plot;
 
     public Plot(GraphContext graphContext, FunctionParser fp) {
@@ -26,11 +29,19 @@ public class Plot {
         this.Y_END = (int) (graphContext.getY_end() * this.Y_SCALE);
 
         this.functions = graphContext.functions;
-        this.allPoints = new ArrayList();
+        this.allPoints = makePoints(fp);
 
+        // converts points into character plot
+        this.SMOOTHING = graphContext.isSmoothing();
+        this.plot = drawPlot();
+    }
+
+    //will create hashmaps with scaled x and y pairs
+    private List<Map<Integer, Integer>> makePoints(FunctionParser fp) {
+        List<Map<Integer, Integer>> result = new ArrayList<>();
         for(int i = 0; i < this.functions.size(); i++) {
-            Map<Integer, Integer> points = new HashMap<Integer, Integer>();
-            for(int x=X_BEGIN; x<=X_END; x++) {
+            Map<Integer, Integer> points = new HashMap<>();
+            for (int x = X_BEGIN; x <= X_END; x++) {
                 double mathX = (x / X_SCALE); // actual x value
                 double mathY = fp.evalParsed(i, mathX);
                 int y = (int) (mathY * Y_SCALE);
@@ -42,12 +53,13 @@ public class Plot {
                 }
                 points.put(x, y);
             }
-            this.allPoints.add(points);
+            result.add(points);
         }
+        return result;
+    }
 
-        // converts points into character plot
-        this.SMOOTHING = graphContext.isSmoothing();
-        this.plot = new char[Y_END-Y_BEGIN+1][X_END-X_BEGIN+1];
+    private char[][] drawPlot() {
+        char[][] result = new char[Y_END-Y_BEGIN+1][X_END-X_BEGIN+1];
         for (int i=(Y_END); i>=Y_BEGIN; i--) {
             for (int j=(X_END); j>=X_BEGIN; j--) {
                 boolean pointExists = false;
@@ -62,77 +74,73 @@ public class Plot {
                         }
                         try{
                             if(SMOOTHING && pointExists && ((nextPoint-i) > 1)) {
-                                this.plot[Y_END - i][j - X_BEGIN] = '@';
+                                result[Y_END - i][j - X_BEGIN] = '@';
                                 for (int l = 1; l < (nextPoint - this.allPoints.get(k).get(j)); l++) {
                                     if (l > ((nextPoint - this.allPoints.get(k).get(j)) / 2)) {
-                                        this.plot[Y_END - i - l][j - X_BEGIN + 1] = '*';
+                                        result[Y_END - i - l][j - X_BEGIN + 1] = '*';
                                     } else {
-                                        this.plot[Y_END - i - l][j - X_BEGIN] = '*';
+                                        result[Y_END - i - l][j - X_BEGIN] = '*';
                                     }
                                 }
                                 break;
                             }
                             else if(SMOOTHING && pointExists && ((nextPoint-i) < 1)) {
-                                this.plot[Y_END - i][j-X_BEGIN] = '@';
+                                result[Y_END - i][j-X_BEGIN] = '@';
                                 for(int l=1; l<(this.allPoints.get(k).get(j) - nextPoint); l++) {
                                     if(l > ((this.allPoints.get(k).get(j) - nextPoint) / 2)) {
-                                        this.plot[Y_END - i + l][j- X_BEGIN + 1] = '*';
+                                        result[Y_END - i + l][j- X_BEGIN + 1] = '*';
                                     }
                                     else {
-                                        this.plot[Y_END - i +l][j - X_BEGIN] = '*';
+                                        result[Y_END - i +l][j - X_BEGIN] = '*';
                                     }
                                 }
                                 break;
                             }
-                            else if(pointExists) {this.plot[Y_END-i][j-X_BEGIN] = '@'; break;}
+                            else if(pointExists) {result[Y_END-i][j-X_BEGIN] = '@'; break;}
                         } catch(Exception e) {
-                                if(pointExists) {this.plot[Y_END-i][j-X_BEGIN] = '@'; break;}
+                            if(pointExists) {result[Y_END-i][j-X_BEGIN] = '@'; break;}
                         }
                     } catch (Exception e) {
                         pointExists = false;
                     }
                 }
-                if(!pointExists && this.plot[Y_END-i][j-X_BEGIN] != '*') {
+                if(!pointExists && result[Y_END-i][j-X_BEGIN] != '*') {
                     if (j == 0 && i == 0) { //center (0,0)
-                        this.plot[Y_END - i][j - X_BEGIN] = '+';
+                        result[Y_END - i][j - X_BEGIN] = '+';
                     } else if(j==0 && i == Y_BEGIN) {
-                        this.plot[Y_END - i][j - X_BEGIN] = 'v';
+                        result[Y_END - i][j - X_BEGIN] = 'v';
                     } else if(j==0 && i == Y_END) {
-                        this.plot[Y_END - i][j - X_BEGIN] = '^';
+                        result[Y_END - i][j - X_BEGIN] = '^';
                     } else if(i == 0 && j == X_BEGIN) {
-                        this.plot[Y_END - i][j - X_BEGIN] = '<';
+                        result[Y_END - i][j - X_BEGIN] = '<';
                     } else if(i == 0 && j == X_END) {
-                        this.plot[Y_END - i][j - X_BEGIN] = '>';
+                        result[Y_END - i][j - X_BEGIN] = '>';
                     } else if(j == 1 && i == Y_END) {
                         String label = String.valueOf(Rounder.round(Y_END / Y_SCALE, 2));
                         for (int h = 0; h < label.length(); h++) {
-                            this.plot[Y_END - i][j - X_BEGIN + h] = label.charAt(h);
+                            result[Y_END - i][j - X_BEGIN + h] = label.charAt(h);
                         }
                     } else if(i == 1 && j == X_END) {
                         String label = String.valueOf(Rounder.round(X_END/X_SCALE, 2));
                         for (int h = 0; h < label.length(); h++) {
-                            this.plot[Y_END - i][(j - X_BEGIN) - h] = label.charAt(label.length() - h - 1);
+                            result[Y_END - i][(j - X_BEGIN) - h] = label.charAt(label.length() - h - 1);
                         }
                     } else if (j == 0) {
-                        this.plot[Y_END - i][j - X_BEGIN] = '|'; // y-axis
+                        result[Y_END - i][j - X_BEGIN] = '|'; // y-axis
                     } else if (i == 0) {
-                        this.plot[Y_END - i][j - X_BEGIN] = '-'; //x-axis
-                    } else if (!Character.isDigit(this.plot[Y_END-i][j-X_BEGIN]) && this.plot[Y_END-i][j-X_BEGIN] != '.'){
-                        this.plot[Y_END - i][j - X_BEGIN] = ' '; // empty space
+                        result[Y_END - i][j - X_BEGIN] = '-'; //x-axis
+                    } else if (!Character.isDigit(result[Y_END-i][j-X_BEGIN]) && result[Y_END-i][j-X_BEGIN] != '.'){
+                        result[Y_END - i][j - X_BEGIN] = ' '; // empty space
                     }
                 }
             }
         }
+        return result;
     }
-
-    public ArrayList<Map<Integer, Integer>> getAllPoints() {
-        return allPoints;
-    }
+    public List<Map<Integer, Integer>> getAllPoints() { return allPoints; }
 
 
-    public char[][] getPlot() {
-        return plot;
-    }
+    public char[][] getPlot() { return plot; }
 
     // converts two-dimensional character array into string with newlines
     public String getStringPlot() {
@@ -180,37 +188,21 @@ public class Plot {
         private boolean smoothing;
         private List<String> functions;
 
-        public double getX_scale() {
-            return x_scale;
-        }
+        public double getX_scale() { return x_scale; }
 
-        public double getY_scale() {
-            return y_scale;
-        }
+        public double getY_scale() { return y_scale; }
 
-        public int getX_begin() {
-            return x_begin;
-        }
+        public int getX_begin() { return x_begin; }
 
-        public int getX_end() {
-            return x_end;
-        }
+        public int getX_end() { return x_end; }
 
-        public int getY_begin() {
-            return y_begin;
-        }
+        public int getY_begin() { return y_begin; }
 
-        public int getY_end() {
-            return y_end;
-        }
+        public int getY_end() { return y_end; }
 
-        public boolean isSmoothing() {
-            return smoothing;
-        }
+        public boolean isSmoothing() { return smoothing; }
 
-        public List<String> getFunctions() {
-            return functions;
-        }
+        public List<String> getFunctions() { return functions; }
 
         public GraphContext(double x_scale, double y_scale, int x_begin, int x_end, int y_begin, int y_end, boolean smoothing, List<String> functions) {
             this.x_scale = x_scale;
@@ -235,6 +227,11 @@ public class Plot {
             this.functions = functions;
         }
 
+
+        public String getJSON() {
+            Gson g = new Gson();
+            return g.toJson(this);
+        }
 
     }
 }

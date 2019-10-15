@@ -20,6 +20,7 @@ public class FunctionParser {
         this.output = parse();
     }
 
+    // uses regex and replaceAll to find and make math expressions into valid Groovy
     public List<String> parse() {
         output = new ArrayList<String>();
         for(int i=0; i<input.size(); i++) {
@@ -48,12 +49,9 @@ public class FunctionParser {
         return output;
     }
 
-    public double evalParsed(int position, double mathX) {
-        return (Double) Eval.x(mathX, output.get(position));
-    }
+    //finds y for fposition(x)
+    public double evalParsed(int position, double mathX) { return (Double) Eval.x(mathX, output.get(position)); }
 
-    public List<String> getOutput() {
-        return output;
-    }
+    public List<String> getOutput() { return output; }
 
 }

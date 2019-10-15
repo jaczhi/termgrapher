@@ -7,6 +7,7 @@ public class IntersectionEngine {
     private final double TOL_S = 0.001;
     private final double TOL_S_FALL = 0.005;
     private final double TOL_S_LAST = 0.01;
+    //uses series of increasingly precise loops to find x value close to 0. tolerance constants above
     
     private int y1;
     private int y2;

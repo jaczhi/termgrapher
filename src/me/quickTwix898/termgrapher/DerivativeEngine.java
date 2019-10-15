@@ -1,12 +1,13 @@
 package me.quickTwix898.termgrapher;
 
 public class DerivativeEngine {
-    private final double STEP = 0.001;
+    private static final double STEP = 0.001;
     private FunctionParser fp;
     private int yNum;
     private double x;
     private String result;
 
+    //uses limit definition of derivative as x->STEP
     public DerivativeEngine(FunctionParser fp, int yNum, double x) {
         this.fp = fp;
         this.yNum = yNum - 1;
