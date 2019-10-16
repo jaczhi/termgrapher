@@ -1,6 +1,7 @@
 package me.quickTwix898.termgrapher;
 
 public class IntegralEngine {
+    // riemann sums with interval of STEP
     private final double STEP = 0.001;
     private FunctionParser fp;
     private int yNum;

@@ -58,77 +58,75 @@ public class Plot {
         return result;
     }
 
+    // draws the plot with various features such as axes
     private char[][] drawPlot() {
         char[][] result = new char[Y_END-Y_BEGIN+1][X_END-X_BEGIN+1];
-        for (int i=(Y_END); i>=Y_BEGIN; i--) {
-            for (int j=(X_END); j>=X_BEGIN; j--) {
+        for (int i=(Y_END); i>=Y_BEGIN; i--) { // iterate through scaled y
+            for (int j=(X_END); j>=X_BEGIN; j--) { // iterate through scaled x
                 boolean pointExists = false;
-                for(int k=0; k<this.allPoints.size(); k++){
+                for(int k=0; k<this.allPoints.size(); k++){ //iterate through list of functions
                     try{
                         pointExists = this.allPoints.get(k).get(j).equals(i);
                         Integer nextPoint;
                         try {
                             nextPoint = this.allPoints.get(k).get(j+1);
                         } catch(Exception e) {
-                            nextPoint = i;
+                            nextPoint = i; // will not do line smoothing
                         }
-                        try{
-                            if(SMOOTHING && pointExists && ((nextPoint-i) > 1)) {
-                                result[Y_END - i][j - X_BEGIN] = '@';
-                                for (int l = 1; l < (nextPoint - this.allPoints.get(k).get(j)); l++) {
-                                    if (l > ((nextPoint - this.allPoints.get(k).get(j)) / 2)) {
-                                        result[Y_END - i - l][j - X_BEGIN + 1] = '*';
-                                    } else {
-                                        result[Y_END - i - l][j - X_BEGIN] = '*';
-                                    }
+
+                        if(SMOOTHING && pointExists && ((nextPoint-i) > 1)) { // positive-slope smoothing
+                            result[Y_END - i][j - X_BEGIN] = '@';
+                            for (int l = 1; l < (nextPoint - this.allPoints.get(k).get(j)); l++) {
+                                if (l > ((nextPoint - this.allPoints.get(k).get(j)) / 2)) {
+                                    result[Y_END - i - l][j - X_BEGIN + 1] = '*';
+                                } else {
+                                    result[Y_END - i - l][j - X_BEGIN] = '*';
                                 }
-                                break;
                             }
-                            else if(SMOOTHING && pointExists && ((nextPoint-i) < 1)) {
-                                result[Y_END - i][j-X_BEGIN] = '@';
-                                for(int l=1; l<(this.allPoints.get(k).get(j) - nextPoint); l++) {
-                                    if(l > ((this.allPoints.get(k).get(j) - nextPoint) / 2)) {
-                                        result[Y_END - i + l][j- X_BEGIN + 1] = '*';
-                                    }
-                                    else {
-                                        result[Y_END - i +l][j - X_BEGIN] = '*';
-                                    }
-                                }
-                                break;
-                            }
-                            else if(pointExists) {result[Y_END-i][j-X_BEGIN] = '@'; break;}
-                        } catch(Exception e) {
-                            if(pointExists) {result[Y_END-i][j-X_BEGIN] = '@'; break;}
+                            break;
                         }
-                    } catch (Exception e) {
-                        pointExists = false;
+                        else if(SMOOTHING && pointExists && ((nextPoint-i) < 1)) { // negative-slope smoothing
+                            result[Y_END - i][j-X_BEGIN] = '@';
+                            for(int l=1; l<(this.allPoints.get(k).get(j) - nextPoint); l++) {
+                                if(l > ((this.allPoints.get(k).get(j) - nextPoint) / 2)) {
+                                    result[Y_END - i + l][j- X_BEGIN + 1] = '*';
+                                }
+                                else {
+                                    result[Y_END - i +l][j - X_BEGIN] = '*';
+                                }
+                            }
+                            break;
+                        }
+                        else if(pointExists) {result[Y_END-i][j-X_BEGIN] = '@'; break;} // no smoothing
+                    } catch(Exception e) {
+                        if(pointExists) {result[Y_END-i][j-X_BEGIN] = '@'; break;}
                     }
                 }
                 if(!pointExists && result[Y_END-i][j-X_BEGIN] != '*') {
-                    if (j == 0 && i == 0) { //center (0,0)
+                    if (j == 0 && i == 0) { // center (0,0)
                         result[Y_END - i][j - X_BEGIN] = '+';
-                    } else if(j==0 && i == Y_BEGIN) {
+                    } else if(j==0 && i == Y_BEGIN) { // bottom axis
                         result[Y_END - i][j - X_BEGIN] = 'v';
-                    } else if(j==0 && i == Y_END) {
+                    } else if(j==0 && i == Y_END) { // top axis
                         result[Y_END - i][j - X_BEGIN] = '^';
-                    } else if(i == 0 && j == X_BEGIN) {
+                    } else if(i == 0 && j == X_BEGIN) { // left axis
                         result[Y_END - i][j - X_BEGIN] = '<';
-                    } else if(i == 0 && j == X_END) {
+                    } else if(i == 0 && j == X_END) { // right axis
                         result[Y_END - i][j - X_BEGIN] = '>';
-                    } else if(j == 1 && i == Y_END) {
+                    } else if(j == 1 && i == Y_END) { // label for top
                         String label = String.valueOf(Rounder.round(Y_END / Y_SCALE, 2));
                         for (int h = 0; h < label.length(); h++) {
                             result[Y_END - i][j - X_BEGIN + h] = label.charAt(h);
                         }
-                    } else if(i == 1 && j == X_END) {
+                    } else if(i == 1 && j == X_END) { //label for right
                         String label = String.valueOf(Rounder.round(X_END/X_SCALE, 2));
                         for (int h = 0; h < label.length(); h++) {
                             result[Y_END - i][(j - X_BEGIN) - h] = label.charAt(label.length() - h - 1);
                         }
-                    } else if (j == 0) {
-                        result[Y_END - i][j - X_BEGIN] = '|'; // y-axis
-                    } else if (i == 0) {
-                        result[Y_END - i][j - X_BEGIN] = '-'; //x-axis
+                    } else if (j == 0) { // vertical axis
+                        result[Y_END - i][j - X_BEGIN] = '|';
+                    } else if (i == 0) { // horizontal axis
+                        result[Y_END - i][j - X_BEGIN] = '-';
                     } else if (!Character.isDigit(result[Y_END-i][j-X_BEGIN]) && result[Y_END-i][j-X_BEGIN] != '.'){
                         result[Y_END - i][j - X_BEGIN] = ' '; // empty space
                     }
@@ -137,6 +135,7 @@ public class Plot {
         }
         return result;
     }
+
     public List<Map<Integer, Integer>> getAllPoints() { return allPoints; }
 
 

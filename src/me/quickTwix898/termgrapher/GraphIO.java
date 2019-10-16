@@ -28,8 +28,6 @@ public class GraphIO {
         return graphContext;
     }
 
-    //TODO use json instead
-
     // IMPORTANT: static method
     public static void writeToFile(
             String filename, Plot.GraphContext context) throws IOException {

@@ -20,6 +20,8 @@ public class Tracer {
     final private char[][] original;
     private Plot.GraphContext context;
 
+    // modifies the character plot to specify where traced
+    // resets to original saved plot once done
     public Tracer(MainWindow window, FunctionParser fp, char[][] original, int yFunc) {
         this.window = window;
         this.fp = fp;

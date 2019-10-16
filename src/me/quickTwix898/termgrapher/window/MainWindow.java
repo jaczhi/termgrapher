@@ -44,7 +44,7 @@ public class MainWindow extends BasicWindow {
     private Label statusLabel; // log
 
     public MainWindow(MultiWindowTextGUI gui) {
-        super("TermGrapher v0.1.0 (c)Jacob Zhi - Beware the Jabberwock, my son!");
+        super("TermGrapher v0.1.2 (c)Jacob Zhi - Beware the Jabberwock, my son!");
         this.gui = gui; // gui will be used by child windows
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -81,12 +81,13 @@ public class MainWindow extends BasicWindow {
 
         // will be cleared after graph is done
         rightPanel.addComponent(new Label("Message of the Day:"));
-        String tips[] = new String[5];
+        String tips[] = new String[6];
         tips[0] = "You can throw an intentional error message by typing the word error into the function box.";
         tips[1] = "Not all content and buttons will show if the window size is too small.";
-        tips[2] = "TermGrapher is still alpha and has many bugs.";
+        tips[2] = "TermGrapher is still beta and has many bugs.";
         tips[3] = "In Inside Out, the pizza toppings were changed from broccolis to bell peppers in Japan, since kids in Japan don’t like bell peppers.";
         tips[4] = "Only y= functions can be graphed in TermGrapher at the moment.";
+        tips[5] = "Have a .tgs file you want to edit without termgrapher? Open it in your favorite text editor!";
         rightPanel.addComponent(new Label(tips[new Random().nextInt(tips.length)]));
         rightPanel.addComponent(new EmptySpace(new TerminalSize(30, 30)));
 
