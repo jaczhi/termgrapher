@@ -2,9 +2,13 @@
 
 Basic terminal mathematical grapher written entirely in Java.
 
-https://i.imgur.com/sFLSbCj.png
+https://i.imgur.com/1kfSGw0.png
 
-## Features (0.1.0 beta)
+https://i.imgur.com/kqWrGZv.png
+
+https://i.imgur.com/yQIoJiC.png
+
+## Features (0.1.2 beta)
 
 * Run without GUI / windowserver
 * Light on memory
